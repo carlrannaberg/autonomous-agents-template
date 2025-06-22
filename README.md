@@ -38,6 +38,73 @@ A template repository for creating autonomous AI agents using Claude. This templ
    ./scripts/run-agent.sh --auto
    ```
 
+## Bootstrapping from a Master Plan
+
+When you have a comprehensive plan or specification document, you can bootstrap your entire project structure:
+
+### 1. **Create Master Plan**
+First, create a detailed plan document:
+```bash
+echo "Your comprehensive project plan..." > master-plan.md
+```
+
+### 2. **Create Bootstrap Issue**
+```bash
+./scripts/create-issue.sh "Bootstrap Project from Master Plan"
+```
+
+### 3. **Edit the Bootstrap Issue**
+Edit the created issue to instruct Claude to decompose your master plan:
+
+```markdown
+# Issue X: Bootstrap Project from Master Plan
+
+## Requirement
+Read the `master-plan.md` file and decompose it into structured issues following our patterns. Create separate issues for each major component or phase.
+
+## Acceptance Criteria
+- [ ] Analyze master plan and identify major implementation phases
+- [ ] Create individual issues for each phase using create-issue.sh
+- [ ] Populate each issue with specific requirements from the master plan
+- [ ] Create corresponding detailed implementation plans
+- [ ] Update todo.md with all new tasks
+- [ ] Ensure proper sequencing and dependencies
+
+## Technical Details
+Use the existing issue/plan structure. Each issue should be self-contained but reference related issues where appropriate.
+
+## Resources
+- master-plan.md - The comprehensive project specification
+```
+
+### 4. **Run the Agent**
+```bash
+./scripts/run-agent.sh
+```
+
+Claude will read your master plan and automatically:
+- Break it down into logical issues
+- Create detailed implementation plans
+- Set up the entire project structure
+- Prepare everything for autonomous execution
+
+### 5. **Execute the Generated Issues**
+Once bootstrapping is complete:
+```bash
+# Review the generated issues and plans
+ls issues/
+ls plans/
+
+# Run all issues autonomously
+./scripts/run-agent.sh --auto
+```
+
+This bootstrapping approach is perfect for:
+- Large projects with detailed specifications
+- Converting existing documentation into actionable tasks
+- Migrating from other project management systems
+- Setting up complex multi-phase implementations
+
 ## Project Structure
 
 ```
