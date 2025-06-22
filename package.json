@@ -1,0 +1,24 @@
+{
+  "name": "autonomous-agents-template",
+  "version": "1.0.0",
+  "description": "Template for creating autonomous AI agents with Claude",
+  "scripts": {
+    "agent": "./scripts/run-agent.sh",
+    "agent:auto": "./scripts/run-agent.sh --auto",
+    "issue": "./scripts/create-issue.sh",
+    "complete": "./scripts/complete-issue.sh"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "claude",
+    "automation",
+    "autonomous"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/autonomous-agents-template.git"
+  }
+}
