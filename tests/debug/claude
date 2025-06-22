@@ -1,0 +1,25 @@
+#!/bin/bash
+# Mock Claude CLI for testing
+
+if [[ "$*" == *"--help"* ]]; then
+    echo "Mock Claude CLI"
+    exit 0
+fi
+
+# Check if this is a streaming request (--output-format stream-json)
+if [[ "$*" == *"stream-json"* ]]; then
+    echo '{"type": "text", "text": "Starting task execution..."}'
+    echo '{"type": "text", "text": "Task completed successfully."}'
+    echo '{"type": "text", "text": "All tests passed."}'
+    echo '{"type": "result", "is_error": false}'
+    exit 0
+else
+    echo '{"type": "text", "text": "Starting task execution..."}'
+    echo '{"type": "text", "text": "Task failed with error"}'
+    echo '{"type": "result", "is_error": true}'
+    exit 1
+fi
+
+# Regular non-streaming request
+echo "Task completed successfully."
+exit 0

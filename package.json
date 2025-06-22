@@ -6,7 +6,9 @@
     "agent": "./scripts/run-agent.sh",
     "agent:auto": "./scripts/run-agent.sh --auto",
     "issue": "./scripts/create-issue.sh",
-    "complete": "./scripts/complete-issue.sh"
+    "complete": "./scripts/complete-issue.sh",
+    "test": "./tests/run-tests.sh",
+    "test:unit": "./tests/run-tests.sh --no-integration"
   },
   "keywords": [
     "ai",
