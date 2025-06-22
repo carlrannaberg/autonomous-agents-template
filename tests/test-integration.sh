@@ -41,7 +41,7 @@ if [[ "$*" == *"stream-json"* ]]; then
     echo '{"type":"text","text":"📝 Analyzing issue and plan..."}'
     echo '{"type":"text","text":"⚡ Implementing solution..."}'
     echo '{"type":"text","text":"✅ Task completed successfully!"}'
-    echo '{"type":"result","is_error":false}'
+    echo '{"type":"result","subtype":"success","is_error":false}'
     exit 0
 fi
 

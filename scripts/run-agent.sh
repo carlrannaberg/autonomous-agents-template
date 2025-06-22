@@ -177,17 +177,14 @@ run_next_issue() {
         echo -e "${GREEN}✅ Agent completed the issue successfully.${NC}"
 
         echo -e "${BLUE}➡️ Marking issue as complete in todo.md...${NC}"
-        # Mark issue as complete
-        ESCAPED_ISSUE_LINE=$(echo "$CURRENT_ISSUE_LINE" | sed 's/[\[\]*.^$()+?{|\\]/\\&/g')
-        COMPLETED_ISSUE_LINE="[x]${CURRENT_ISSUE_LINE:3}"
-        
-        # Handle both macOS and Linux sed
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i.bak "s/$ESCAPED_ISSUE_LINE/$COMPLETED_ISSUE_LINE/" todo.md
-        else
-            sed -i "s/$ESCAPED_ISSUE_LINE/$COMPLETED_ISSUE_LINE/" todo.md
-        fi
-        rm -f todo.md.bak
+        # Mark issue as complete - use a simpler approach with awk
+        awk -v line="$CURRENT_ISSUE_LINE" '
+        {
+            if ($0 == line) {
+                gsub(/- \[ \]/, "- [x]", $0)
+            }
+            print
+        }' todo.md > todo.md.tmp && mv todo.md.tmp todo.md
 
         # Optional: auto-commit if in a git repo
         if [ -d ".git" ] && [ "${AUTO_COMMIT:-true}" = "true" ]; then

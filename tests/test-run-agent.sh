@@ -41,12 +41,12 @@ if [[ "\$*" == *"stream-json"* ]]; then
         echo '{"type":"text","text":"Starting task execution..."}'
         echo '{"type":"text","text":"Task completed successfully."}'
         echo '{"type":"text","text":"All tests passed."}'
-        echo '{"type":"result","is_error":false}'
+        echo '{"type":"result","subtype":"success","is_error":false}'
         exit 0
     else
         echo '{"type":"text","text":"Starting task execution..."}'
         echo '{"type":"text","text":"Task failed with error"}'
-        echo '{"type":"result","is_error":true}'
+        echo '{"type":"result","subtype":"error","is_error":true}'
         exit 1
     fi
 fi
