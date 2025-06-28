@@ -8,3 +8,6 @@ This file tracks all issues for the autonomous agent. Issues are automatically m
 - [x] **[Issue #3]** Issue One - `issues/3-issue-one.md`
 - [x] **[Issue #4]** Issue Two - `issues/4-issue-two.md`
 - [x] **[Issue #5]** Issue Three - `issues/5-issue-three.md`
+- [x] **[Issue #6]** First Issue - `issues/6-first-issue.md`
+- [ ] **[Issue #7]** Second Issue - `issues/7-second-issue.md`
+- [ ] **[Issue #8]** Third Issue - `issues/8-third-issue.md`
