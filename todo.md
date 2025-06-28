@@ -9,3 +9,4 @@ This is my project's todo list with some custom formatting.
 ## Pending Tasks
 - [x] **[Issue #57]** Implement authentication - `issues/57-implement-authentication.md`
 - [x] **[Issue #58]** Add user dashboard - `issues/58-add-user-dashboard.md`
+- [x] **[Issue #59]** Test Issue - `issues/59-test-issue.md`
