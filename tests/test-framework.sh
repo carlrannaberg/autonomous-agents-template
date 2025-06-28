@@ -31,8 +31,8 @@ after_all() {
 init_test() {
     ORIGINAL_DIR=$(pwd)
     TEST_DIR=$(mktemp -d)
+    cp -R "$ORIGINAL_DIR/." "$TEST_DIR"
     cd "$TEST_DIR"
-    cp -R "$ORIGINAL_DIR/scripts" ./
     echo "Test environment: $TEST_DIR"
 }
 
@@ -40,7 +40,7 @@ init_test() {
 run_after_each() {
     for callback in "${AFTER_EACH_CALLBACKS[@]}"; do
         eval "$callback" || echo "Warning: after_each callback failed: $callback"
-    done
+    n    }
 }
 
 # Run after all callbacks
@@ -201,7 +201,7 @@ run_test_suite() {
     echo "==============================================="
     
     init_test
-    (cd "$ORIGINAL_DIR" && source "$test_file")
+    source "$test_file"
     cleanup_test
     
     print_results
