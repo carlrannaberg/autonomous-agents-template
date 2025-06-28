@@ -19,9 +19,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Stream logs (keep directory structure but ignore log files)
-logs/*.json
-!logs/.gitkeep
+# Stream logs are tracked in git for debugging and analysis
 
 # Environment
 .env
