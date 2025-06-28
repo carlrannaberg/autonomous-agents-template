@@ -140,6 +140,7 @@ run_next_issue() {
     echo -e "${WHITE}Found next issue. Launching agent for:${NC}"
     echo -e "${CYAN}  📋 Issue:  ${YELLOW}${ISSUE_FILE}${NC}"
     echo -e "${CYAN}  📝 Plan:   ${YELLOW}${PLAN_FILE}${NC}"
+    echo -e "${CYAN}  📄 Log:    ${YELLOW}${LOG_FILE}${NC}"
     echo ""
 
     if ! command -v claude &> /dev/null; then
@@ -155,13 +156,20 @@ run_next_issue() {
 
     INITIAL_PROMPT="You are an autonomous AI agent. The following text contains your task context (TODO list, issue specification, and implementation plan). Your goal is to execute the plan to resolve the issue. Complete all requirements specified. The task is complete when you have fulfilled all acceptance criteria. ${CLAUDE_INSTRUCTIONS}"
 
-    # Create temporary file for output
+    # Create temporary file for output and permanent log file
     OUTPUT_LOG=$(mktemp)
+    TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
+    ISSUE_NAME=$(basename "$ISSUE_FILE" .md)
+    LOG_FILE="logs/run-${TIMESTAMP}-${ISSUE_NAME}.json"
+    
+    # Ensure logs directory exists
+    mkdir -p logs
+    
     AGENT_SUCCESS=false
 
     # Run the agent with todo, issue, and plan as context
     set -o pipefail
-    if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | claude -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | format_claude_output "$OUTPUT_LOG" ); then
+    if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | claude -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | tee "$LOG_FILE" | format_claude_output "$OUTPUT_LOG" ); then
         # Check the last line for success signal
         LAST_LINE=$(tail -n 1 "$OUTPUT_LOG")
         if echo "$LAST_LINE" | grep -q '"type":"result"' && echo "$LAST_LINE" | grep -q '"is_error":false'; then
