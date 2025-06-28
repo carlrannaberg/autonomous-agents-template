@@ -1,11 +1,6 @@
-# My Project Todo List
+# To-Do
 
-This is my project's todo list with some custom formatting.
+This file tracks all issues for the autonomous agent. Issues are automatically marked as complete when the agent finishes them.
 
-## Completed Tasks
-- [x] Set up project structure
-- [x] Configure development environment
-
-## Pending Tasks
-- [x] **[Issue #1]** Implement authentication - `issues/1-implement-authentication.md`
-- [x] **[Issue #2]** Add user dashboard - `issues/2-add-user-dashboard.md`
+## Pending Issues
+- [x] **[Issue #1]** Test Issue - `issues/1-test-issue.md`
