@@ -8,4 +8,4 @@ This is my project's todo list with some custom formatting.
 
 ## Pending Tasks
 - [x] **[Issue #1]** Implement authentication - `issues/1-implement-authentication.md`
-- [ ] **[Issue #2]** Add user dashboard - `issues/2-add-user-dashboard.md`
+- [x] **[Issue #2]** Add user dashboard - `issues/2-add-user-dashboard.md`
