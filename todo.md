@@ -18,5 +18,5 @@ This is my project's todo list with some custom formatting.
 - [x] **[Issue #17]** Fix login bug - `issues/17-fix-login-bug.md`
 - [x] **[Issue #18]** Add new feature - `issues/18-add-new-feature.md`
 - [x] **[Issue #19]** Issue One - `issues/19-issue-one.md`
-- [ ] **[Issue #20]** Issue Two - `issues/20-issue-two.md`
+- [x] **[Issue #20]** Issue Two - `issues/20-issue-two.md`
 - [ ] **[Issue #21]** Issue Three - `issues/21-issue-three.md`
