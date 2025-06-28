@@ -68,6 +68,14 @@ export -f assert_exit_code
 export -f print_results
 export -f run_test
 
+export -f assert_equals
+export -f assert_file_exists
+export -f assert_file_not_exists
+export -f assert_contains
+export -f assert_exit_code
+export -f print_results
+export -f run_test
+
 assert_equals() {
     local expected="$1"
     local actual="$2"
