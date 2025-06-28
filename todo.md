@@ -20,3 +20,6 @@ This is my project's todo list with some custom formatting.
 - [x] **[Issue #19]** Issue One - `issues/19-issue-one.md`
 - [x] **[Issue #20]** Issue Two - `issues/20-issue-two.md`
 - [x] **[Issue #21]** Issue Three - `issues/21-issue-three.md`
+- [x] **[Issue #22]** First Issue - `issues/22-first-issue.md`
+- [ ] **[Issue #23]** Second Issue - `issues/23-second-issue.md`
+- [ ] **[Issue #24]** Third Issue - `issues/24-third-issue.md`
