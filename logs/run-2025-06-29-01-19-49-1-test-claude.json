@@ -1,4 +1,3 @@
 {"type":"text","text":"Starting task execution..."}
-{"type":"text","text":"Task completed successfully."}
-{"type":"text","text":"All tests passed."}
-{"type":"result","subtype":"success","is_error":false}
+{"type":"text","text":"Task failed with error"}
+{"type":"result","subtype":"error","is_error":true}
