@@ -10,3 +10,5 @@ This is my project's todo list with some custom formatting.
 - [x] **[Issue #73]** Implement authentication - `issues/73-implement-authentication.md`
 - [x] **[Issue #74]** Add user dashboard - `issues/74-add-user-dashboard.md`
 - [x] **[Issue #75]** Test Issue - `issues/75-test-issue.md`
+- [x] **[Issue #76]** First - `issues/76-first.md`
+- [ ] **[Issue #77]** Second - `issues/77-second.md`
