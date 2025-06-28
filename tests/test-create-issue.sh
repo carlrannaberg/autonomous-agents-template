@@ -29,7 +29,7 @@ test_create_first_issue() {
     
     # Check if files were created
     assert_file_exists "issues/1-test-issue-title.md" "Issue file should be created"
-    assert_file_exists "plans/plan_1-test-issue-title.md" "Plan file should be created"
+    assert_file_exists "plans/1-test-issue-title.md" "Plan file should be created"
     assert_file_exists "todo.md" "Todo file should be created"
     
     # Check issue file content
@@ -39,7 +39,7 @@ test_create_first_issue() {
     assert_contains "$issue_content" "## Acceptance Criteria" "Issue should have acceptance criteria"
     
     # Check plan file content
-    local plan_content=$(cat "plans/plan_1-test-issue-title.md")
+    local plan_content=$(cat "plans/1-test-issue-title.md")
     assert_contains "$plan_content" "# Plan for Issue 1: Test Issue Title" "Plan should contain title"
     assert_contains "$plan_content" "issues/1-test-issue-title.md" "Plan should reference issue file"
     
@@ -59,8 +59,8 @@ test_create_sequential_issues() {
     # Check files exist with correct IDs
     assert_file_exists "issues/1-first-issue.md" "First issue file should exist"
     assert_file_exists "issues/2-second-issue.md" "Second issue file should exist"
-    assert_file_exists "plans/plan_1-first-issue.md" "First plan file should exist"
-    assert_file_exists "plans/plan_2-second-issue.md" "Second plan file should exist"
+    assert_file_exists "plans/1-first-issue.md" "First plan file should exist"
+    assert_file_exists "plans/2-second-issue.md" "Second plan file should exist"
     
     # Check todo file has both entries
     local todo_content=$(cat "todo.md")
@@ -133,7 +133,7 @@ test_with_existing_numbered_issues() {
     bash "$CREATE_ISSUE_SCRIPT" "New Issue"
     
     assert_file_exists "issues/8-new-issue.md" "Should use next available ID (8)"
-    assert_file_exists "plans/plan_8-new-issue.md" "Should create plan with correct ID"
+    assert_file_exists "plans/8-new-issue.md" "Should create plan with correct ID"
 }
 
 test_plan_file_naming_convention() {
@@ -143,18 +143,18 @@ test_plan_file_naming_convention() {
     bash "$CREATE_ISSUE_SCRIPT" "Second Test Issue"
     bash "$CREATE_ISSUE_SCRIPT" "Complex Title: With Special Characters!"
     
-    # Verify ALL plan files have the "plan_" prefix
-    assert_file_exists "plans/plan_1-first-test-issue.md" "Plan file should have plan_ prefix"
-    assert_file_exists "plans/plan_2-second-test-issue.md" "Plan file should have plan_ prefix"
-    assert_file_exists "plans/plan_3-complex-title-with-special-characters.md" "Plan file should have plan_ prefix"
+    # Verify ALL plan files use correct naming (no plan_ prefix)
+    assert_file_exists "plans/1-first-test-issue.md" "Plan file should exist without plan_ prefix"
+    assert_file_exists "plans/2-second-test-issue.md" "Plan file should exist without plan_ prefix"
+    assert_file_exists "plans/3-complex-title-with-special-characters.md" "Plan file should exist without plan_ prefix"
     
-    # Verify no plan files exist WITHOUT the prefix (this is the critical test)
-    assert_file_not_exists "plans/1-first-test-issue.md" "Plan file should NOT exist without plan_ prefix"
-    assert_file_not_exists "plans/2-second-test-issue.md" "Plan file should NOT exist without plan_ prefix"
-    assert_file_not_exists "plans/3-complex-title-with-special-characters.md" "Plan file should NOT exist without plan_ prefix"
+    # Verify no plan files exist WITH the prefix (this is the critical test)
+    assert_file_not_exists "plans/plan_1-first-test-issue.md" "Plan file should NOT exist with plan_ prefix"
+    assert_file_not_exists "plans/plan_2-second-test-issue.md" "Plan file should NOT exist with plan_ prefix"
+    assert_file_not_exists "plans/plan_3-complex-title-with-special-characters.md" "Plan file should NOT exist with plan_ prefix"
     
     # Verify plan files contain correct cross-references to issue files
-    local plan_content=$(cat "plans/plan_1-first-test-issue.md")
+    local plan_content=$(cat "plans/1-first-test-issue.md")
     assert_contains "$plan_content" "issues/1-first-test-issue.md" "Plan should reference issue file with correct naming"
 }
 
@@ -168,4 +168,4 @@ run_test test_existing_todo_file "Existing todo.md file"
 run_test test_directories_creation "Directory creation"
 run_test test_missing_title_argument "Missing title argument"
 run_test test_with_existing_numbered_issues "ID generation with existing issues"
-run_test test_plan_file_naming_convention "Plan file naming convention (plan_ prefix)"
+run_test test_plan_file_naming_convention "Plan file naming convention (no plan_ prefix)"

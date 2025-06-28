@@ -195,7 +195,7 @@ test_error_recovery_workflow() {
     bash "$CREATE_ISSUE_SCRIPT" "Test Issue"
     
     # Remove plan file to simulate error
-    rm -f "plans/plan_1-test-issue.md"
+    rm -f "plans/1-test-issue.md"
     
     # Agent should fail gracefully
     create_mock_claude
@@ -206,7 +206,7 @@ test_error_recovery_workflow() {
     assert_contains "$todo_content" "- [ ] **[Issue #1]** Test Issue - \`issues/1-test-issue.md\`" "Issue should remain unchecked after failure"
     
     # Fix the issue by recreating plan
-    echo "# Plan: Test Issue" > "plans/plan_1-test-issue.md"
+    echo "# Plan: Test Issue" > "plans/1-test-issue.md"
     
     # Agent should now succeed
     bash "$RUN_AGENT_SCRIPT"
@@ -258,7 +258,7 @@ test_file_template_consistency() {
     assert_contains "$issue_content" "## Additional Notes" "Issue should have notes section"
     
     # Check plan template
-    local plan_content=$(cat "plans/plan_1-feature-request-add-dark-mode.md")
+    local plan_content=$(cat "plans/1-feature-request-add-dark-mode.md")
     assert_contains "$plan_content" "# Plan: Feature Request: Add Dark Mode" "Plan should have correct title"
     assert_contains "$plan_content" "**Issue:** [1-feature-request-add-dark-mode.md](../issues/1-feature-request-add-dark-mode.md)" "Plan should reference issue"
     assert_contains "$plan_content" "## Objective" "Plan should have objective section"

@@ -43,7 +43,7 @@ fi
 TITLE="$1"
 TITLE_SLUG=$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | tr -s '[:punct:][:space:]' '-' | sed 's/[^a-z0-9-]*//g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//')
 ISSUE_FILE="issues/${NEXT_ID}-${TITLE_SLUG}.md"
-PLAN_FILE="plans/plan_${NEXT_ID}-${TITLE_SLUG}.md"
+PLAN_FILE="plans/${NEXT_ID}-${TITLE_SLUG}.md"
 
 # Create issue file
 cat > "$ISSUE_FILE" << EOL

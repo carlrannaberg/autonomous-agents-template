@@ -125,7 +125,7 @@ run_next_issue() {
 
     # Extract the issue file path from the issue line
     ISSUE_FILE=$(echo "$CURRENT_ISSUE_LINE" | grep -o '`issues/.*\.md`' | tr -d '\`')
-    PLAN_FILE="plans/plan_$(basename "$ISSUE_FILE" .md).md"
+    PLAN_FILE="plans/$(basename "$ISSUE_FILE" .md).md"
     
     if [ ! -f "$ISSUE_FILE" ] || [ ! -f "$PLAN_FILE" ]; then
         echo -e "${RED}Error: Issue or plan file not found:${NC}"
