@@ -14,7 +14,7 @@ This is my project's todo list with some custom formatting.
 - [x] **[Issue #13]** Second - `issues/13-second.md`
 - [x] **[Issue #14]** Third - `issues/14-third.md`
 - [x] **[Issue #15]** Fourth - `issues/15-fourth.md`
-- [ ] **[Issue #16]** Feature Request: Add Dark Mode - `issues/16-feature-request-add-dark-mode.md`
+- [x] **[Issue #16]** Feature Request: Add Dark Mode - `issues/16-feature-request-add-dark-mode.md`
 - [ ] **[Issue #17]** Fix login bug - `issues/17-fix-login-bug.md`
 - [ ] **[Issue #18]** Add new feature - `issues/18-add-new-feature.md`
 - [ ] **[Issue #19]** Issue One - `issues/19-issue-one.md`
