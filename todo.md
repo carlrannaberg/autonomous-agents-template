@@ -7,19 +7,5 @@ This is my project's todo list with some custom formatting.
 - [x] Configure development environment
 
 ## Pending Tasks
-- [x] **[Issue #9]** Implement authentication - `issues/9-implement-authentication.md`
-- [x] **[Issue #10]** Add user dashboard - `issues/10-add-user-dashboard.md`
-- [x] **[Issue #11]** Test Issue - `issues/11-test-issue.md`
-- [x] **[Issue #12]** First - `issues/12-first.md`
-- [x] **[Issue #13]** Second - `issues/13-second.md`
-- [x] **[Issue #14]** Third - `issues/14-third.md`
-- [x] **[Issue #15]** Fourth - `issues/15-fourth.md`
-- [x] **[Issue #16]** Feature Request: Add Dark Mode - `issues/16-feature-request-add-dark-mode.md`
-- [x] **[Issue #17]** Fix login bug - `issues/17-fix-login-bug.md`
-- [x] **[Issue #18]** Add new feature - `issues/18-add-new-feature.md`
-- [x] **[Issue #19]** Issue One - `issues/19-issue-one.md`
-- [x] **[Issue #20]** Issue Two - `issues/20-issue-two.md`
-- [x] **[Issue #21]** Issue Three - `issues/21-issue-three.md`
-- [x] **[Issue #22]** First Issue - `issues/22-first-issue.md`
-- [x] **[Issue #23]** Second Issue - `issues/23-second-issue.md`
-- [ ] **[Issue #24]** Third Issue - `issues/24-third-issue.md`
+- [x] **[Issue #25]** Implement authentication - `issues/25-implement-authentication.md`
+- [ ] **[Issue #26]** Add user dashboard - `issues/26-add-user-dashboard.md`
