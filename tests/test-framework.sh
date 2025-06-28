@@ -201,7 +201,7 @@ run_test_suite() {
     echo "==============================================="
     
     init_test
-    source "$test_file"
+    (cd "$ORIGINAL_DIR" && source "$test_file")
     cleanup_test
     
     print_results
