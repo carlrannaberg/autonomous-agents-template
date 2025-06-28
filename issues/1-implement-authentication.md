@@ -1,4 +1,4 @@
-# Issue 3: Third Issue
+# Issue 1: Implement authentication
 
 ## Requirement
 [Describe the main requirement or problem to solve]

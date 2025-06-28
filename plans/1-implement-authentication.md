@@ -1,6 +1,6 @@
-# Plan for Issue 3: Third Issue
+# Plan for Issue 1: Implement authentication
 
-This document outlines the step-by-step plan to complete `issues/3-third-issue.md`.
+This document outlines the step-by-step plan to complete `issues/1-implement-authentication.md`.
 
 ## Implementation Plan
 

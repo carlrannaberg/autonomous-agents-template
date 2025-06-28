@@ -1,6 +1,6 @@
-# Plan for Issue 1: First Issue
+# Plan for Issue 2: Add user dashboard
 
-This document outlines the step-by-step plan to complete `issues/1-first-issue.md`.
+This document outlines the step-by-step plan to complete `issues/2-add-user-dashboard.md`.
 
 ## Implementation Plan
 
