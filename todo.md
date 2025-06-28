@@ -1,14 +1,5 @@
-# My Project Todo List
+# Todo List
 
-This is my project's todo list with some custom formatting.
-
-## Completed Tasks
-- [x] Set up project structure
-- [x] Configure development environment
-
-## Pending Tasks
-- [x] **[Issue #9]** Implement authentication - `issues/9-implement-authentication.md`
-- [x] **[Issue #10]** Add user dashboard - `issues/10-add-user-dashboard.md`
-- [x] **[Issue #11]** Test Issue - `issues/11-test-issue.md`
-- [x] **[Issue #12]** First - `issues/12-first.md`
-- [ ] **[Issue #13]** Second - `issues/13-second.md`
+- [x] **[Issue #1]** Completed Issue - `issues/1-completed.md`
+- [x] **[Issue #2]** First Unchecked - `issues/2-first-unchecked.md`
+- [ ] **[Issue #3]** Second Unchecked - `issues/3-second-unchecked.md`

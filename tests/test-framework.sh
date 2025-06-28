@@ -32,6 +32,7 @@ init_test() {
     ORIGINAL_DIR=$(pwd)
     TEST_DIR=$(mktemp -d)
     cd "$TEST_DIR"
+    cp -R "$ORIGINAL_DIR/scripts" ./
     echo "Test environment: $TEST_DIR"
 }
 

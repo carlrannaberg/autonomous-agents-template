@@ -26,14 +26,6 @@ test_create_first_issue() {
     
     # Run create-issue script
     bash "$CREATE_ISSUE_SCRIPT" "Test Issue Title"
-    
-    echo "--- Debugging: Files after create-issue.sh ---"
-    ls -l issues/ plans/ todo.md
-    echo "--- Content of issues/1-test-issue-title.md ---"
-    cat issues/1-test-issue-title.md
-    echo "--- Content of plans/1-test-issue-title.md ---"
-    cat plans/1-test-issue-title.md
-    echo "------------------------------------------------"
 
     # Check if files were created
     assert_file_exists "issues/1-test-issue-title.md" "Issue file should be created"
