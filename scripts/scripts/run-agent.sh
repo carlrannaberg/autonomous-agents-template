@@ -40,10 +40,10 @@ format_claude_output() {
                         MODEL=$(echo "$line" | jq -r '.model // empty' 2>/dev/null)
                         TOOLS=$(echo "$line" | jq -r '.tools | length // 0' 2>/dev/null)
                         if [ "$MODEL" != "empty" ] && [ "$MODEL" != "" ]; then
-                            echo -e "${GRAY}   Model: $MODEL${NC}"
+                            echo -e "   Model: $MODEL"
                         fi
                         if [ "$TOOLS" != "0" ]; then
-                            echo -e "${GRAY}   Tools available: $TOOLS${NC}"
+                            echo -e "   Tools available: $TOOLS"
                         fi
                         echo ""
                     fi
@@ -107,6 +107,65 @@ format_claude_output() {
     done
 }
 
+# Function to format and display JSON stream from Gemini
+format_gemini_output() {
+    local temp_file="$1"
+
+    echo -e "${CYAN}┌─────────────────────────────────────────────────────────────┐${NC}"
+    echo -e "${CYAN}│                     🤖 GEMINI AGENT                        │${NC}"
+    echo -e "${CYAN}└─────────────────────────────────────────────────────────────┘${NC}"
+    echo ""
+
+    while IFS= read -r line; do
+        echo "$line" >> "$temp_file"
+        [ -z "$line" ] && continue
+
+        if echo "$line" | jq -e . >/dev/null 2>&1; then
+            TYPE=$(echo "$line" | jq -r '.type // empty' 2>/dev/null)
+            case "$TYPE" in
+                "tool_code")
+                    TOOL_CODE=$(echo "$line" | jq -r '.content // ""')
+                    echo -e "${BLUE}🔧 Using tool:${NC}\n${WHITE}$TOOL_CODE${NC}"
+                    echo ""
+                    ;;
+                "model_output")
+                    TEXT_CONTENT=$(echo "$line" | jq -r '.content // ""')
+                    echo -e "${WHITE}💭 Agent: ${NC}$TEXT_CONTENT"
+                    echo ""
+                    ;;
+                "tool_result")
+                     CONTENT=$(echo "$line" | jq -r '.content // ""')
+                     if [ ${#CONTENT} -gt 300 ]; then
+                         PREVIEW=$(echo "$CONTENT" | head -c 300)
+                         echo -e "${GREEN}✅ Tool result: ${GRAY}${PREVIEW}...${NC}"
+                     else
+                         echo -e "${GREEN}✅ Tool result: ${GRAY}$CONTENT${NC}"
+                     fi
+                     echo ""
+                    ;;
+                "result")
+                    STATUS=$(echo "$line" | jq -r '.status // "error"' 2>/dev/null)
+                    if [ "$STATUS" = "success" ]; then
+                        echo -e "${GREEN}✅ Task completed successfully!${NC}"
+                    else
+                        echo -e "${RED}❌ Task failed${NC}"
+                    fi
+                    echo ""
+                    ;;
+                *)
+                    if [ "$TYPE" != "empty" ] && [ -n "$TYPE" ]; then
+                        echo -e "${GRAY}📄 $TYPE${NC}"
+                    fi
+                    ;;
+            esac
+        else
+            if [ -n "$line" ] && [[ ! "$line" =~ ^[[:space:]]*$ ]]; then
+                echo -e "${GRAY}📝 $line${NC}"
+            fi
+        fi
+    done
+}
+
 # Function to run the agent on the next available issue
 run_next_issue() {
     # Check if todo.md exists
@@ -124,13 +183,13 @@ run_next_issue() {
     fi
 
     # Extract the issue file path from the issue line
-    ISSUE_FILE=$(echo "$CURRENT_ISSUE_LINE" | grep -o '`issues/.*\.md`' | tr -d '\`')
+    ISSUE_FILE=$(echo "$CURRENT_ISSUE_LINE" | grep -o '`issues/.*\.md`' | tr -d '`')
     PLAN_FILE="plans/$(basename "$ISSUE_FILE" .md).md"
     
     if [ ! -f "$ISSUE_FILE" ] || [ ! -f "$PLAN_FILE" ]; then
         echo -e "${RED}Error: Issue or plan file not found:${NC}"
-        echo -e "${RED}  Issue: $ISSUE_FILE${NC}"
-        echo -e "${RED}  Plan: $PLAN_FILE${NC}"
+        echo -e "  Issue: $ISSUE_FILE"
+        echo -e "  Plan: $PLAN_FILE"
         exit 1
     fi
 
@@ -140,34 +199,60 @@ run_next_issue() {
     echo -e "${WHITE}Found next issue. Launching agent for:${NC}"
     echo -e "${CYAN}  📋 Issue:  ${YELLOW}${ISSUE_FILE}${NC}"
     echo -e "${CYAN}  📝 Plan:   ${YELLOW}${PLAN_FILE}${NC}"
+    echo -e "${CYAN}  📄 Log:    ${YELLOW}${LOG_FILE}${NC}"
     echo ""
 
-    if ! command -v claude &> /dev/null; then
-        echo -e "${RED}Error: 'claude' command not found. Install it from: https://claude.ai/code${NC}"
-        exit 1
+    # Read the instructions
+    INSTRUCTIONS=""
+    if [ "$PROVIDER" = "gemini" ] && [ -f "GEMINI.md" ]; then
+        INSTRUCTIONS=$(cat GEMINI.md)
+    elif [ -f "CLAUDE.md" ]; then
+        INSTRUCTIONS=$(cat CLAUDE.md)
     fi
 
-    # Read the Claude instructions
-    CLAUDE_INSTRUCTIONS=""
-    if [ -f "CLAUDE.md" ]; then
-        CLAUDE_INSTRUCTIONS=$(cat CLAUDE.md)
-    fi
+    INITIAL_PROMPT="You are an autonomous AI agent. The following text contains your task context (TODO list, issue specification, and implementation plan). Your goal is to execute the plan to resolve the issue. Complete all requirements specified. The task is complete when you have fulfilled all acceptance criteria. ${INSTRUCTIONS}"
 
-    INITIAL_PROMPT="You are an autonomous AI agent. The following text contains your task context (TODO list, issue specification, and implementation plan). Your goal is to execute the plan to resolve the issue. Complete all requirements specified. The task is complete when you have fulfilled all acceptance criteria. ${CLAUDE_INSTRUCTIONS}"
-
-    # Create temporary file for output
+    # Create temporary file for output and permanent log file
     OUTPUT_LOG=$(mktemp)
+    TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
+    ISSUE_NAME=$(basename "$ISSUE_FILE" .md)
+    LOG_FILE="logs/run-${TIMESTAMP}-${ISSUE_NAME}-${PROVIDER}.json"
+    
+    # Ensure logs directory exists
+    mkdir -p logs
+    
     AGENT_SUCCESS=false
 
     # Run the agent with todo, issue, and plan as context
     set -o pipefail
-    if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | claude -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | format_claude_output "$OUTPUT_LOG" ); then
-        # Check the last line for success signal
-        LAST_LINE=$(tail -n 1 "$OUTPUT_LOG")
-        if echo "$LAST_LINE" | grep -q '"type":"result"' && echo "$LAST_LINE" | grep -q '"is_error":false'; then
-            AGENT_SUCCESS=true
+
+    if [ "$PROVIDER" = "gemini" ]; then
+        if ! command -v gemini &> /dev/null; then
+            echo -e "${RED}Error: 'gemini' command not found. Make sure it's installed and in your PATH.${NC}"
+            exit 1
+        fi
+        
+        if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | gemini -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | tee "$LOG_FILE" | format_gemini_output "$OUTPUT_LOG" ); then
+            LAST_LINE=$(tail -n 1 "$OUTPUT_LOG")
+            if echo "$LAST_LINE" | grep -q '"type":"result"' && echo "$LAST_LINE" | grep -q '"status":"success"'; then
+                AGENT_SUCCESS=true
+            fi
+        fi
+    else # Default to claude
+        if ! command -v claude &> /dev/null; then
+            echo -e "${RED}Error: 'claude' command not found. Install it from: https://claude.ai/code${NC}"
+            exit 1
+        fi
+
+        if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | claude -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | tee "$LOG_FILE" | format_claude_output "$OUTPUT_LOG" ); then
+            # Check the last line for success signal
+            LAST_LINE=$(tail -n 1 "$OUTPUT_LOG")
+            if echo "$LAST_LINE" | grep -q '"type":"result"' && echo "$LAST_LINE" | grep -q '"is_error":false'; then
+                AGENT_SUCCESS=true
+            fi
         fi
     fi
+
     set +o pipefail
     rm "$OUTPUT_LOG"
 
@@ -203,20 +288,27 @@ run_next_issue() {
 
 # Parse command line arguments
 AUTO_MODE=false
+PROVIDER="claude" # Default provider
+
 while [[ $# -gt 0 ]]; do
     case $1 in
         --auto)
             AUTO_MODE=true
             shift
             ;;
+        -p|--provider)
+            PROVIDER="$2"
+            shift 2
+            ;;
         --help|-h)
-            echo "Usage: $0 [--auto]"
+            echo "Usage: $0 [--auto] [-p|--provider <name>]"
             echo ""
-            echo "Run Claude agent on issues from todo.md"
+            echo "Run an AI agent on issues from todo.md"
             echo ""
             echo "Options:"
-            echo "  --auto    Run all issues automatically without stopping"
-            echo "  --help    Show this help message"
+            echo "  --auto              Run all issues automatically without stopping"
+            echo "  -p, --provider      Specify the AI provider ('claude' or 'gemini'). Defaults to 'claude'."
+            echo "  --help              Show this help message"
             exit 0
             ;;
         *)

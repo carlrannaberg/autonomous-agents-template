@@ -4,7 +4,7 @@ A template repository for creating autonomous AI agents using Claude. This templ
 
 ## Features
 
-- 🤖 Autonomous task execution with Claude
+- 🤖 Autonomous task execution with Claude or Gemini
 - 📋 Issue and plan management system with todo tracking
 - 🎨 Beautiful formatted output with progress tracking
 - 🔄 Single task or continuous execution modes
@@ -12,7 +12,7 @@ A template repository for creating autonomous AI agents using Claude. This templ
 
 ## Prerequisites
 
-- [Claude CLI](https://claude.ai/code) installed and configured
+- [Claude CLI](https://claude.ai/code) or [Gemini CLI](https://ai.google.dev/docs/gemini_cli) installed and configured
 - Bash shell (macOS/Linux)
 - `jq` for JSON parsing (install with `brew install jq` or `apt-get install jq`)
 
@@ -21,8 +21,15 @@ A template repository for creating autonomous AI agents using Claude. This templ
 This template provides npm scripts for all operations:
 
 ```bash
-npm run agent         # Run the agent for one task
-npm run agent:auto    # Run the agent continuously for all tasks
+# Claude commands
+npm run agent               # Run Claude agent for one task
+npm run agent:auto          # Run Claude agent continuously for all tasks
+
+# Gemini commands
+npm run agent:gemini        # Run Gemini agent for one task
+npm run agent:gemini:auto   # Run Gemini agent continuously for all tasks
+
+# Other commands
 npm run issue         # Create a new issue
 npm run bootstrap     # Create a bootstrap issue from master plan
 npm run complete      # Manually mark an issue as complete
@@ -45,11 +52,11 @@ npm run test:unit     # Run unit tests only
 
 3. **Run the agent**
    ```bash
-   # Run a single task
+   # Run a single task with Claude
    npm run agent
 
-   # Run all tasks continuously
-   npm run agent:auto
+   # Run all tasks continuously with Gemini
+   npm run agent:gemini:auto
    ```
 
 ## Bootstrapping from a Master Plan
@@ -82,7 +89,7 @@ npm run issue "Bootstrap Project from Master Plan"
 # Then manually edit the issue to add bootstrap instructions
 ```
 
-The `create-bootstrap.sh` command automatically creates a properly formatted bootstrap issue that instructs Claude to:
+The `create-bootstrap.sh` command automatically creates a properly formatted bootstrap issue that instructs the AI to:
 - Read and analyze your master plan document
 - Decompose it into individual, actionable issues
 - Create implementation plans for each issue
@@ -90,10 +97,14 @@ The `create-bootstrap.sh` command automatically creates a properly formatted boo
 
 ### 3. **Run the Agent**
 ```bash
+# Run with Claude
 npm run agent
+
+# Or run with Gemini
+npm run agent:gemini
 ```
 
-Claude will read your master plan and automatically:
+The AI will read your master plan and automatically:
 - Break it down into logical issues
 - Create detailed implementation plans
 - Set up the entire project structure
@@ -107,7 +118,7 @@ ls issues/
 ls plans/
 
 # Run all issues autonomously
-npm run agent:auto
+npm run agent:auto # or agent:gemini:auto
 ```
 
 This bootstrapping approach is perfect for:
@@ -131,6 +142,7 @@ autonomous-agents-template/
 ├── examples/             # Example issues and workflows
 ├── todo.md              # Issue tracking file
 ├── CLAUDE.md            # Claude-specific project instructions
+├── GEMINI.md            # Gemini-specific project instructions
 └── README.md            # This file
 ```
 
@@ -138,18 +150,23 @@ autonomous-agents-template/
 
 All scripts can be run via npm commands. Use `npm run <command>` instead of calling shell scripts directly.
 
-### `run-agent.sh` (via `npm run agent`)
-The main script that runs Claude on your tasks.
+### `run-agent.sh` (via `npm run agent` or `npm run agent:gemini`)
+The main script that runs the AI on your tasks.
 
 **Usage:**
 ```bash
-npm run agent        # Run the next pending issue only
-npm run agent:auto   # Run all pending issues continuously
+# Run with Claude
+npm run agent
+npm run agent:auto
+
+# Run with Gemini
+npm run agent:gemini
+npm run agent:gemini:auto
 ```
 
 **Options:**
-- `agent:auto`: Run all pending issues continuously
-- `agent`: Run the next pending issue only
+- `--auto`: Run all pending issues continuously
+- `-p, --provider`: Specify the AI provider ('claude' or 'gemini'). Defaults to 'claude'.
 
 ### `create-issue.sh` (via `npm run issue`)
 Creates a new issue file with corresponding plan and adds it to todo.md.
@@ -252,8 +269,8 @@ Each issue has a corresponding plan in the `plans/` directory:
 
 ## Customization
 
-### Claude Instructions
-Create a `CLAUDE.md` file in the root directory to provide project-specific instructions:
+### AI Instructions
+Create a `CLAUDE.md` or `GEMINI.md` file in the root directory to provide project-specific instructions:
 
 ```markdown
 # Project Context
@@ -278,8 +295,8 @@ Create a `CLAUDE.md` file in the root directory to provide project-specific inst
 ./scripts/create-issue.sh "Create user authentication endpoints"
 ./scripts/create-issue.sh "Add PostgreSQL database integration"
 
-# Run all issues
-./scripts/run-agent.sh --auto
+# Run all issues with Gemini
+./scripts/run-agent.sh -p gemini --auto
 ```
 
 ### Example 2: Data Processing Pipeline
@@ -289,12 +306,12 @@ Create a `CLAUDE.md` file in the root directory to provide project-specific inst
 ./scripts/create-issue.sh "Transform data according to schema"
 ./scripts/create-issue.sh "Export results to JSON format"
 
-# Run issues one by one with review
-./scripts/run-agent.sh
+# Run issues one by one with Claude
+./scripts/run-agent.sh -p claude
 # Review results...
-./scripts/run-agent.sh
+./scripts/run-agent.sh -p claude
 # Review results...
-./scripts/run-agent.sh
+./scripts/run-agent.sh -p claude
 ```
 
 ## Best Practices
@@ -302,14 +319,14 @@ Create a `CLAUDE.md` file in the root directory to provide project-specific inst
 1. **Clear Issue Definitions**: Be specific about requirements and acceptance criteria
 2. **Detailed Plans**: Create comprehensive implementation plans
 3. **Incremental Issues**: Break large projects into smaller, testable issues
-3. **Context Matters**: Include relevant project context in CLAUDE.md
-4. **Review Output**: In non-auto mode, review agent output before proceeding
-5. **Version Control**: Commit your issues, plans, and todo.md for tracking
+4. **Context Matters**: Include relevant project context in `CLAUDE.md` or `GEMINI.md`
+5. **Review Output**: In non-auto mode, review agent output before proceeding
+6. **Version Control**: Commit your issues, plans, and todo.md for tracking
 
 ## Troubleshooting
 
-**"claude: command not found"**
-- Install Claude CLI from https://claude.ai/code
+**"claude: command not found"** or **"gemini: command not found"**
+- Install the required CLI from its official source.
 
 **"jq: command not found"**
 - macOS: `brew install jq`
