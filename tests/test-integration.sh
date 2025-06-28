@@ -269,16 +269,10 @@ test_file_template_consistency() {
 # Run all integration tests
 echo "=== Integration Tests ==="
 
-test_complete_workflow_single_issue
-echo
-test_complete_workflow_multiple_issues
-echo
-test_mixed_workflow_states
-echo
-test_workflow_with_existing_todo
-echo
-test_error_recovery_workflow
-echo
-test_sequential_id_assignment
-echo
-test_file_template_consistency
+run_test test_complete_workflow_single_issue "Complete workflow - Create, Run, Complete single issue"
+run_test test_complete_workflow_multiple_issues "Complete workflow - Multiple issues in sequence"
+run_test test_mixed_workflow_states "Mixed workflow with partial completion states"
+run_test test_workflow_with_existing_todo "Workflow with pre-existing todo.md"
+run_test test_error_recovery_workflow "Error recovery in workflow"
+run_test test_sequential_id_assignment "Sequential ID assignment across workflow"
+run_test test_file_template_consistency "File template consistency across workflow"
