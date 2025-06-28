@@ -19,4 +19,4 @@ This is my project's todo list with some custom formatting.
 - [x] **[Issue #66]** Add new feature - `issues/66-add-new-feature.md`
 - [x] **[Issue #67]** Issue One - `issues/67-issue-one.md`
 - [x] **[Issue #68]** Issue Two - `issues/68-issue-two.md`
-- [ ] **[Issue #69]** Issue Three - `issues/69-issue-three.md`
+- [x] **[Issue #69]** Issue Three - `issues/69-issue-three.md`
