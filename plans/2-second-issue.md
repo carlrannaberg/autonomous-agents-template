@@ -1,6 +1,6 @@
-# Plan for Issue 1: Issue One
+# Plan for Issue 2: Second Issue
 
-This document outlines the step-by-step plan to complete `issues/1-issue-one.md`.
+This document outlines the step-by-step plan to complete `issues/2-second-issue.md`.
 
 ## Implementation Plan
 

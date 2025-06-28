@@ -1,6 +1,6 @@
-# Plan for Issue 3: Issue Three
+# Plan for Issue 3: Third Issue
 
-This document outlines the step-by-step plan to complete `issues/3-issue-three.md`.
+This document outlines the step-by-step plan to complete `issues/3-third-issue.md`.
 
 ## Implementation Plan
 

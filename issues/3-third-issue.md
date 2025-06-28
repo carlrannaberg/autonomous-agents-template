@@ -1,4 +1,4 @@
-# Issue 3: Issue Three
+# Issue 3: Third Issue
 
 ## Requirement
 [Describe the main requirement or problem to solve]

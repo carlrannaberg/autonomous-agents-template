@@ -1,4 +1,4 @@
-# Issue 1: Issue One
+# Issue 1: First Issue
 
 ## Requirement
 [Describe the main requirement or problem to solve]
