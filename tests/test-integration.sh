@@ -128,9 +128,9 @@ test_mixed_workflow_states() {
     
     # Verify mixed state
     local todo_content=$(cat "todo.md")
-    assert_contains "$todo_content" "- [ ] [First Issue](issues/001-first-issue.md)" "Issue 1 should be unchecked"
-    assert_contains "$todo_content" "- [x] [Second Issue](issues/002-second-issue.md)" "Issue 2 should be manually completed"
-    assert_contains "$todo_content" "- [ ] [Third Issue](issues/003-third-issue.md)" "Issue 3 should be unchecked"
+    assert_contains "$todo_content" "- [ ] **[Issue #1]** First Issue - \`issues/1-first-issue.md\`" "Issue 1 should be unchecked"
+    assert_contains "$todo_content" "- [x] **[Issue #2]** Second Issue - \`issues/2-second-issue.md\`" "Issue 2 should be manually completed"
+    assert_contains "$todo_content" "- [ ] **[Issue #3]** Third Issue - \`issues/3-third-issue.md\`" "Issue 3 should be unchecked"
     
     # Run agent - should process first unchecked issue (Issue 1)
     create_mock_claude
@@ -138,15 +138,15 @@ test_mixed_workflow_states() {
     
     # Verify correct issue was processed
     todo_content=$(cat "todo.md")
-    assert_contains "$todo_content" "- [x] [First Issue](issues/001-first-issue.md)" "Issue 1 should now be complete"
-    assert_contains "$todo_content" "- [x] [Second Issue](issues/002-second-issue.md)" "Issue 2 should remain complete"
-    assert_contains "$todo_content" "- [ ] [Third Issue](issues/003-third-issue.md)" "Issue 3 should remain unchecked"
+    assert_contains "$todo_content" "- [x] **[Issue #1]** First Issue - \`issues/1-first-issue.md\`" "Issue 1 should now be complete"
+    assert_contains "$todo_content" "- [x] **[Issue #2]** Second Issue - \`issues/2-second-issue.md\`" "Issue 2 should remain complete"
+    assert_contains "$todo_content" "- [ ] **[Issue #3]** Third Issue - \`issues/3-third-issue.md\`" "Issue 3 should remain unchecked"
     
     # Run agent again - should process Issue 3
     bash "$RUN_AGENT_SCRIPT"
     
     todo_content=$(cat "todo.md")
-    assert_contains "$todo_content" "- [x] [Third Issue](issues/003-third-issue.md)" "Issue 3 should now be complete"
+    assert_contains "$todo_content" "- [x] **[Issue #3]** Third Issue - \`issues/3-third-issue.md\`" "Issue 3 should now be complete"
 }
 
 test_workflow_with_existing_todo() {
@@ -174,8 +174,8 @@ EOF
     assert_contains "$todo_content" "# My Project Todo List" "Should preserve custom header"
     assert_contains "$todo_content" "- [x] Set up project structure" "Should preserve existing completed tasks"
     assert_contains "$todo_content" "## Pending Tasks" "Should preserve section headers"
-    assert_contains "$todo_content" "- [ ] [Implement authentication](issues/001-implement-authentication.md)" "Should add new issue"
-    assert_contains "$todo_content" "- [ ] [Add user dashboard](issues/002-add-user-dashboard.md)" "Should add second issue"
+    assert_contains "$todo_content" "- [ ] **[Issue #1]** Implement authentication - \`issues/1-implement-authentication.md\`" "Should add new issue"
+    assert_contains "$todo_content" "- [ ] **[Issue #2]** Add user dashboard - \`issues/2-add-user-dashboard.md\`" "Should add second issue"
     
     # Process issues with agent
     create_mock_claude
@@ -184,8 +184,8 @@ EOF
     # Verify completion while preserving format
     todo_content=$(cat "todo.md")
     assert_contains "$todo_content" "# My Project Todo List" "Should still preserve custom header"
-    assert_contains "$todo_content" "- [x] [Implement authentication](issues/001-implement-authentication.md)" "Issue 1 should be complete"
-    assert_contains "$todo_content" "- [x] [Add user dashboard](issues/002-add-user-dashboard.md)" "Issue 2 should be complete"
+    assert_contains "$todo_content" "- [x] **[Issue #1]** Implement authentication - \`issues/1-implement-authentication.md\`" "Issue 1 should be complete"
+    assert_contains "$todo_content" "- [x] **[Issue #2]** Add user dashboard - \`issues/2-add-user-dashboard.md\`" "Issue 2 should be complete"
 }
 
 test_error_recovery_workflow() {
@@ -195,7 +195,7 @@ test_error_recovery_workflow() {
     bash "$CREATE_ISSUE_SCRIPT" "Test Issue"
     
     # Remove plan file to simulate error
-    rm -f "plans/001-test-issue-plan.md"
+    rm -f "plans/plan_1-test-issue.md"
     
     # Agent should fail gracefully
     create_mock_claude
@@ -203,16 +203,16 @@ test_error_recovery_workflow() {
     
     # Verify issue remains unchecked after failure
     local todo_content=$(cat "todo.md")
-    assert_contains "$todo_content" "- [ ] [Test Issue](issues/001-test-issue.md)" "Issue should remain unchecked after failure"
+    assert_contains "$todo_content" "- [ ] **[Issue #1]** Test Issue - \`issues/1-test-issue.md\`" "Issue should remain unchecked after failure"
     
     # Fix the issue by recreating plan
-    echo "# Plan: Test Issue" > "plans/001-test-issue-plan.md"
+    echo "# Plan: Test Issue" > "plans/plan_1-test-issue.md"
     
     # Agent should now succeed
     bash "$RUN_AGENT_SCRIPT"
     
     todo_content=$(cat "todo.md")
-    assert_contains "$todo_content" "- [x] [Test Issue](issues/001-test-issue.md)" "Issue should be complete after fix"
+    assert_contains "$todo_content" "- [x] **[Issue #1]** Test Issue - \`issues/1-test-issue.md\`" "Issue should be complete after fix"
 }
 
 test_sequential_id_assignment() {
@@ -231,17 +231,17 @@ test_sequential_id_assignment() {
     bash "$CREATE_ISSUE_SCRIPT" "Fourth"
     
     # Verify correct ID assignment
-    assert_file_exists "issues/001-first.md" "First issue should have ID 001"
-    assert_file_exists "issues/002-second.md" "Second issue should have ID 002"
-    assert_file_exists "issues/003-third.md" "Third issue should have ID 003"
-    assert_file_exists "issues/004-fourth.md" "Fourth issue should have ID 004"
+    assert_file_exists "issues/1-first.md" "First issue should have ID 1"
+    assert_file_exists "issues/2-second.md" "Second issue should have ID 2"
+    assert_file_exists "issues/3-third.md" "Third issue should have ID 3"
+    assert_file_exists "issues/4-fourth.md" "Fourth issue should have ID 4"
     
     # Verify todo has all issues
     local todo_content=$(cat "todo.md")
-    assert_contains "$todo_content" "- [x] [First](issues/001-first.md)" "First should be complete"
-    assert_contains "$todo_content" "- [ ] [Second](issues/002-second.md)" "Second should be unchecked"
-    assert_contains "$todo_content" "- [ ] [Third](issues/003-third.md)" "Third should be unchecked"
-    assert_contains "$todo_content" "- [ ] [Fourth](issues/004-fourth.md)" "Fourth should be unchecked"
+    assert_contains "$todo_content" "- [x] **[Issue #1]** First - \`issues/1-first.md\`" "First should be complete"
+    assert_contains "$todo_content" "- [ ] **[Issue #2]** Second - \`issues/2-second.md\`" "Second should be unchecked"
+    assert_contains "$todo_content" "- [ ] **[Issue #3]** Third - \`issues/3-third.md\`" "Third should be unchecked"
+    assert_contains "$todo_content" "- [ ] **[Issue #4]** Fourth - \`issues/4-fourth.md\`" "Fourth should be unchecked"
 }
 
 test_file_template_consistency() {
@@ -251,16 +251,16 @@ test_file_template_consistency() {
     bash "$CREATE_ISSUE_SCRIPT" "Feature Request: Add Dark Mode"
     
     # Check issue template
-    local issue_content=$(cat "issues/001-feature-request-add-dark-mode.md")
+    local issue_content=$(cat "issues/1-feature-request-add-dark-mode.md")
     assert_contains "$issue_content" "# Feature Request: Add Dark Mode" "Issue should have correct title"
     assert_contains "$issue_content" "## Description" "Issue should have description section"
     assert_contains "$issue_content" "## Acceptance Criteria" "Issue should have acceptance criteria"
     assert_contains "$issue_content" "## Additional Notes" "Issue should have notes section"
     
     # Check plan template
-    local plan_content=$(cat "plans/001-feature-request-add-dark-mode-plan.md")
+    local plan_content=$(cat "plans/plan_1-feature-request-add-dark-mode.md")
     assert_contains "$plan_content" "# Plan: Feature Request: Add Dark Mode" "Plan should have correct title"
-    assert_contains "$plan_content" "**Issue:** [001-feature-request-add-dark-mode.md](../issues/001-feature-request-add-dark-mode.md)" "Plan should reference issue"
+    assert_contains "$plan_content" "**Issue:** [1-feature-request-add-dark-mode.md](../issues/1-feature-request-add-dark-mode.md)" "Plan should reference issue"
     assert_contains "$plan_content" "## Objective" "Plan should have objective section"
     assert_contains "$plan_content" "## Implementation Steps" "Plan should have implementation steps"
     assert_contains "$plan_content" "## Success Criteria" "Plan should have success criteria"

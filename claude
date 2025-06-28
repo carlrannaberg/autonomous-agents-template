@@ -1,0 +1,20 @@
+#!/bin/bash
+# Mock Claude CLI that simulates successful task completion
+
+if [[ "$*" == *"--help"* ]]; then
+    echo "Mock Claude CLI for integration testing"
+    exit 0
+fi
+
+# Check if this is a streaming request (--output-format stream-json)
+if [[ "$*" == *"stream-json"* ]]; then
+    echo '{"type":"text","text":"🤖 Starting task execution..."}'
+    echo '{"type":"text","text":"📝 Analyzing issue and plan..."}'
+    echo '{"type":"text","text":"⚡ Implementing solution..."}'
+    echo '{"type":"text","text":"✅ Task completed successfully!"}'
+    echo '{"type":"result","subtype":"success","is_error":false}'
+    exit 0
+fi
+
+echo "Task completed successfully via Claude AI"
+exit 0

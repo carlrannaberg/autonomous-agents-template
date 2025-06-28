@@ -136,6 +136,28 @@ test_with_existing_numbered_issues() {
     assert_file_exists "plans/plan_8-new-issue.md" "Should create plan with correct ID"
 }
 
+test_plan_file_naming_convention() {
+    
+    # Create multiple issues to test naming convention consistency
+    bash "$CREATE_ISSUE_SCRIPT" "First Test Issue"
+    bash "$CREATE_ISSUE_SCRIPT" "Second Test Issue"
+    bash "$CREATE_ISSUE_SCRIPT" "Complex Title: With Special Characters!"
+    
+    # Verify ALL plan files have the "plan_" prefix
+    assert_file_exists "plans/plan_1-first-test-issue.md" "Plan file should have plan_ prefix"
+    assert_file_exists "plans/plan_2-second-test-issue.md" "Plan file should have plan_ prefix"
+    assert_file_exists "plans/plan_3-complex-title-with-special-characters.md" "Plan file should have plan_ prefix"
+    
+    # Verify no plan files exist WITHOUT the prefix (this is the critical test)
+    assert_file_not_exists "plans/1-first-test-issue.md" "Plan file should NOT exist without plan_ prefix"
+    assert_file_not_exists "plans/2-second-test-issue.md" "Plan file should NOT exist without plan_ prefix"
+    assert_file_not_exists "plans/3-complex-title-with-special-characters.md" "Plan file should NOT exist without plan_ prefix"
+    
+    # Verify plan files contain correct cross-references to issue files
+    local plan_content=$(cat "plans/plan_1-first-test-issue.md")
+    assert_contains "$plan_content" "issues/1-first-test-issue.md" "Plan should reference issue file with correct naming"
+}
+
 # Run all tests
 echo "=== Testing create-issue.sh ==="
 
@@ -146,3 +168,4 @@ run_test test_existing_todo_file "Existing todo.md file"
 run_test test_directories_creation "Directory creation"
 run_test test_missing_title_argument "Missing title argument"
 run_test test_with_existing_numbered_issues "ID generation with existing issues"
+run_test test_plan_file_naming_convention "Plan file naming convention (plan_ prefix)"
