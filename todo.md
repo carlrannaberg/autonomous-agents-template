@@ -13,7 +13,7 @@ This is my project's todo list with some custom formatting.
 - [x] **[Issue #28]** First - `issues/28-first.md`
 - [x] **[Issue #29]** Second - `issues/29-second.md`
 - [x] **[Issue #30]** Third - `issues/30-third.md`
-- [ ] **[Issue #31]** Fourth - `issues/31-fourth.md`
+- [x] **[Issue #31]** Fourth - `issues/31-fourth.md`
 - [ ] **[Issue #32]** Feature Request: Add Dark Mode - `issues/32-feature-request-add-dark-mode.md`
 - [ ] **[Issue #33]** Fix login bug - `issues/33-fix-login-bug.md`
 - [ ] **[Issue #34]** Add new feature - `issues/34-add-new-feature.md`
