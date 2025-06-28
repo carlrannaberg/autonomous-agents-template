@@ -16,6 +16,20 @@ A template repository for creating autonomous AI agents using Claude. This templ
 - Bash shell (macOS/Linux)
 - `jq` for JSON parsing (install with `brew install jq` or `apt-get install jq`)
 
+## Available Commands
+
+This template provides npm scripts for all operations:
+
+```bash
+npm run agent         # Run the agent for one task
+npm run agent:auto    # Run the agent continuously for all tasks
+npm run issue         # Create a new issue
+npm run bootstrap     # Create a bootstrap issue from master plan
+npm run complete      # Manually mark an issue as complete
+npm run test          # Run all tests
+npm run test:unit     # Run unit tests only
+```
+
 ## Quick Start
 
 1. **Clone this template**
@@ -26,16 +40,16 @@ A template repository for creating autonomous AI agents using Claude. This templ
 
 2. **Create your first issue**
    ```bash
-   ./scripts/create-issue.sh "Build a REST API for user management"
+   npm run issue "Build a REST API for user management"
    ```
 
 3. **Run the agent**
    ```bash
    # Run a single task
-   ./scripts/run-agent.sh
+   npm run agent
 
    # Run all tasks continuously
-   ./scripts/run-agent.sh --auto
+   npm run agent:auto
    ```
 
 ## Bootstrapping from a Master Plan
@@ -49,37 +63,34 @@ echo "Your comprehensive project plan..." > master-plan.md
 ```
 
 ### 2. **Create Bootstrap Issue**
+
+#### Using the Bootstrap Command (Recommended)
 ```bash
-./scripts/create-issue.sh "Bootstrap Project from Master Plan"
+# Create bootstrap issue with default master-plan.md
+npm run bootstrap
+
+# Or specify a custom plan file
+npm run bootstrap -- --plan my-project-spec.md
+
+# Open in editor after creation
+npm run bootstrap -- --editor
 ```
 
-### 3. **Edit the Bootstrap Issue**
-Edit the created issue to instruct Claude to decompose your master plan:
-
-```markdown
-# Issue X: Bootstrap Project from Master Plan
-
-## Requirement
-Read the `master-plan.md` file and decompose it into structured issues following our patterns. Create separate issues for each major component or phase.
-
-## Acceptance Criteria
-- [ ] Analyze master plan and identify major implementation phases
-- [ ] Create individual issues for each phase using create-issue.sh
-- [ ] Populate each issue with specific requirements from the master plan
-- [ ] Create corresponding detailed implementation plans
-- [ ] Update todo.md with all new tasks
-- [ ] Ensure proper sequencing and dependencies
-
-## Technical Details
-Use the existing issue/plan structure. Each issue should be self-contained but reference related issues where appropriate.
-
-## Resources
-- master-plan.md - The comprehensive project specification
+#### Manual Method
+```bash
+npm run issue "Bootstrap Project from Master Plan"
+# Then manually edit the issue to add bootstrap instructions
 ```
 
-### 4. **Run the Agent**
+The `create-bootstrap.sh` command automatically creates a properly formatted bootstrap issue that instructs Claude to:
+- Read and analyze your master plan document
+- Decompose it into individual, actionable issues
+- Create implementation plans for each issue
+- Update todo.md with all new tasks in proper sequence
+
+### 3. **Run the Agent**
 ```bash
-./scripts/run-agent.sh
+npm run agent
 ```
 
 Claude will read your master plan and automatically:
@@ -88,7 +99,7 @@ Claude will read your master plan and automatically:
 - Set up the entire project structure
 - Prepare everything for autonomous execution
 
-### 5. **Execute the Generated Issues**
+### 4. **Execute the Generated Issues**
 Once bootstrapping is complete:
 ```bash
 # Review the generated issues and plans
@@ -96,7 +107,7 @@ ls issues/
 ls plans/
 
 # Run all issues autonomously
-./scripts/run-agent.sh --auto
+npm run agent:auto
 ```
 
 This bootstrapping approach is perfect for:
@@ -112,6 +123,7 @@ autonomous-agents-template/
 ├── scripts/
 │   ├── run-agent.sh      # Main agent runner
 │   ├── create-issue.sh   # Create new issues with plans
+│   ├── create-bootstrap.sh # Create bootstrap issue from master plan
 │   └── complete-issue.sh # Manually mark issues as complete
 ├── issues/               # Issue definitions (created automatically)
 ├── plans/                # Implementation plans (created automatically)
@@ -124,24 +136,27 @@ autonomous-agents-template/
 
 ## Scripts
 
-### `run-agent.sh`
+All scripts can be run via npm commands. Use `npm run <command>` instead of calling shell scripts directly.
+
+### `run-agent.sh` (via `npm run agent`)
 The main script that runs Claude on your tasks.
 
 **Usage:**
 ```bash
-./scripts/run-agent.sh [--auto]
+npm run agent        # Run the next pending issue only
+npm run agent:auto   # Run all pending issues continuously
 ```
 
 **Options:**
-- `--auto`: Run all pending issues continuously
-- Without flags: Run the next pending issue only
+- `agent:auto`: Run all pending issues continuously
+- `agent`: Run the next pending issue only
 
-### `create-issue.sh`
+### `create-issue.sh` (via `npm run issue`)
 Creates a new issue file with corresponding plan and adds it to todo.md.
 
 **Usage:**
 ```bash
-./scripts/create-issue.sh [--editor] "Issue title"
+npm run issue [-- --editor] "Issue title"
 ```
 
 **Options:**
@@ -149,20 +164,45 @@ Creates a new issue file with corresponding plan and adds it to todo.md.
 
 **Example:**
 ```bash
-./scripts/create-issue.sh --editor "Implement authentication system"
+npm run issue -- --editor "Implement authentication system"
 ```
 
-### `complete-issue.sh`
+### `create-bootstrap.sh` (via `npm run bootstrap`)
+Create a bootstrap issue that decomposes a master plan into individual tasks.
+
+**Usage:**
+```bash
+npm run bootstrap [-- [--plan <plan-file>] [--editor]]
+```
+
+**Options:**
+- `--plan <file>`: Path to the plan markdown file (default: master-plan.md)
+- `--editor`: Open the created bootstrap issue in your $EDITOR
+- `-h, --help`: Show help message
+
+**Examples:**
+```bash
+# Use default master-plan.md
+npm run bootstrap
+
+# Use custom plan file
+npm run bootstrap -- --plan docs/project-spec.md
+
+# Open in editor after creation
+npm run bootstrap -- --editor
+```
+
+### `complete-issue.sh` (via `npm run complete`)
 Manually mark an issue as complete (useful if an issue was completed outside the agent).
 
 **Usage:**
 ```bash
-./scripts/complete-issue.sh <issue_number>"
+npm run complete <issue_number>
 ```
 
 **Example:**
 ```bash
-./scripts/complete-issue.sh 3
+npm run complete 3
 ```
 
 ## Issue and Plan Format

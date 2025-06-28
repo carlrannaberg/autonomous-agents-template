@@ -88,6 +88,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Available test suites:"
             echo "  create-issue         Test create-issue.sh script"
+            echo "  create-bootstrap     Test create-bootstrap.sh script"
             echo "  complete-issue       Test complete-issue.sh script"
             echo "  run-agent           Test run-agent.sh script"
             echo "  integration         Test complete workflow"
@@ -107,6 +108,9 @@ get_test_suite_path() {
         "create-issue")
             echo "$SCRIPT_DIR/test-create-issue.sh"
             ;;
+        "create-bootstrap")
+            echo "$SCRIPT_DIR/test-create-bootstrap.sh"
+            ;;
         "complete-issue")
             echo "$SCRIPT_DIR/test-complete-issue.sh"
             ;;
@@ -123,7 +127,7 @@ get_test_suite_path() {
 }
 
 get_available_test_suites() {
-    echo "create-issue complete-issue run-agent integration"
+    echo "create-issue create-bootstrap complete-issue run-agent integration"
 }
 
 # Run specific test if requested
@@ -146,6 +150,7 @@ else
     
     # Unit tests
     run_test_suite "$(get_test_suite_path 'create-issue')" "Create Issue Script Tests"
+    run_test_suite "$(get_test_suite_path 'create-bootstrap')" "Create Bootstrap Script Tests"
     run_test_suite "$(get_test_suite_path 'complete-issue')" "Complete Issue Script Tests"
     run_test_suite "$(get_test_suite_path 'run-agent')" "Run Agent Script Tests"
     
