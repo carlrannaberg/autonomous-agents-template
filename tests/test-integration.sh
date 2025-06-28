@@ -60,7 +60,7 @@ test_complete_workflow_single_issue() {
     
     # Verify issue creation
     assert_file_exists "issues/1-fix-login-bug.md" "Issue file should be created"
-    assert_file_exists "plans/plan_1-fix-login-bug.md" "Plan file should be created"
+    assert_file_exists "plans/1-fix-login-bug.md" "Plan file should be created"
     assert_file_exists "todo.md" "Todo file should be created"
     
     # Check todo content

@@ -103,7 +103,7 @@ EOF
     # Create issue and plan files
     mkdir -p issues plans
     echo "# First Unchecked Issue" > "issues/2-first-unchecked.md"
-    echo "# Plan for First Unchecked" > "plans/plan_2-first-unchecked.md"
+    echo "# Plan for First Unchecked" > "plans/2-first-unchecked.md"
     
     # Mock successful Claude execution
     create_mock_claude true
@@ -158,7 +158,7 @@ EOF
 
     mkdir -p issues plans
     echo "# Test Issue" > "issues/1-test.md"
-    echo "# Test Plan" > "plans/plan_1-test.md"
+    echo "# Test Plan" > "plans/1-test.md"
     
     # Mock successful Claude
     create_mock_claude true
@@ -182,7 +182,7 @@ EOF
 
     mkdir -p issues plans
     echo "# Test Issue" > "issues/1-test.md"
-    echo "# Test Plan" > "plans/plan_1-test.md"
+    echo "# Test Plan" > "plans/1-test.md"
     
     # Mock failed Claude
     create_mock_claude false
@@ -210,7 +210,7 @@ EOF
     mkdir -p issues plans
     for i in {1..3}; do
         echo "# Issue $i" > "issues/$i-issue-$(echo $i | sed 's/1/one/; s/2/two/; s/3/three/').md"
-        echo "# Plan $i" > "plans/plan_$i-issue-$(echo $i | sed 's/1/one/; s/2/two/; s/3/three/').md"
+        echo "# Plan $i" > "plans/$i-issue-$(echo $i | sed 's/1/one/; s/2/two/; s/3/three/').md"
     done
     
     # Mock successful Claude
@@ -239,9 +239,9 @@ EOF
     # Create files
     mkdir -p issues plans
     echo "# Issue One" > "issues/1-issue-one.md"
-    echo "# Plan One" > "plans/plan_1-issue-one.md"
+    echo "# Plan One" > "plans/1-issue-one.md"
     echo "# Issue Two" > "issues/2-issue-two.md"
-    echo "# Plan Two" > "plans/plan_2-issue-two.md"
+    echo "# Plan Two" > "plans/2-issue-two.md"
     
     # Mock Claude that succeeds first time, fails second
     cat > claude << 'EOF'
@@ -279,7 +279,7 @@ EOF
 
     mkdir -p issues plans
     echo "# Test Issue" > "issues/1-test.md"
-    echo "# Test Plan" > "plans/plan_1-test.md"
+    echo "# Test Plan" > "plans/1-test.md"
     
     # Ensure claude is not in PATH
     export PATH="/usr/bin:/bin"
