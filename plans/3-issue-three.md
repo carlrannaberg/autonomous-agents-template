@@ -1,6 +1,6 @@
-# Plan for Issue 1: Fix login bug
+# Plan for Issue 3: Issue Three
 
-This document outlines the step-by-step plan to complete `issues/1-fix-login-bug.md`.
+This document outlines the step-by-step plan to complete `issues/3-issue-three.md`.
 
 ## Implementation Plan
 

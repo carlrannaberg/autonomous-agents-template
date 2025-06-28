@@ -1,4 +1,4 @@
-# Issue 1: Fix login bug
+# Issue 1: Issue One
 
 ## Requirement
 [Describe the main requirement or problem to solve]
