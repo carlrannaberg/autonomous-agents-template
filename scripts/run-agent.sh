@@ -243,7 +243,7 @@ run_next_issue() {
         INSTRUCTIONS=$(cat CLAUDE.md)
     fi
 
-    INITIAL_PROMPT="You are an autonomous AI agent. The following text contains your task context (TODO list, issue specification, and implementation plan). Your goal is to execute the plan to resolve the issue. Complete all requirements specified. The task is complete when you have fulfilled all acceptance criteria. ${INSTRUCTIONS}"
+    INITIAL_PROMPT="You are an autonomous AI agent. The following text contains your task context (TODO list, issue specification, and implementation plan). Your goal is to execute the plan to resolve the issue. Complete all requirements specified. The task is complete when you have fulfilled all acceptance criteria. As your final step, you must update the CLAUDE.md and GEMINI.md files with any new information about the project, such as new dependencies, scripts, or changes to the project structure. ${INSTRUCTIONS}"
 
     # Create temporary file for output and permanent log file
     OUTPUT_LOG=$(mktemp)
