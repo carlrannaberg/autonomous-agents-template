@@ -11,7 +11,8 @@
     "bootstrap": "./scripts/create-bootstrap.sh",
     "complete": "./scripts/complete-issue.sh",
     "test": "./tests/run-tests.sh",
-    "test:unit": "./tests/run-tests.sh --no-integration"
+    "test:unit": "./tests/run-tests.sh --no-integration",
+    "update": "./scripts/update-context.sh"
   },
   "keywords": [
     "ai",
