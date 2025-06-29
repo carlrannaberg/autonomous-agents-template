@@ -3,14 +3,10 @@
 This file contains project-specific instructions for Claude Code. Customize this file to provide context about your project, coding standards, and any special requirements that Claude should follow when working on tasks.
 
 ## Project Context
-- Project: autonomous-agents-template
-- Description: Template for creating autonomous AI agents with Claude or Gemini
-- Repository: https://github.com/yourusername/autonomous-agents-template.git
+<!-- Describe your project architecture, purpose, and key components -->
 
 ## Technology Stack
-- Bash
-- jq
-- Node.js (for running scripts)
+<!-- List the main technologies, frameworks, and tools used -->
 
 ## Coding Standards
 <!-- Define coding conventions, style guides, and best practices -->
@@ -19,8 +15,7 @@ This file contains project-specific instructions for Claude Code. Customize this
 <!-- Explain the project's directory organization -->
 
 ## Key Dependencies
-- Claude CLI or Gemini CLI: For interacting with the AI models.
-- jq: For parsing JSON in shell scripts.
+<!-- List important libraries and their purposes -->
 
 ## Environment Setup
 <!-- Describe any environment variables or configuration needed -->

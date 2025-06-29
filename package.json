@@ -12,7 +12,7 @@
     "complete": "./scripts/complete-issue.sh",
     "test": "./tests/run-tests.sh",
     "test:unit": "./tests/run-tests.sh --no-integration",
-    "update": "./scripts/update-context.sh"
+    "update-context": "./scripts/create-update-context-issue.sh"
   },
   "keywords": [
     "ai",
