@@ -166,6 +166,39 @@ format_gemini_output() {
     done
 }
 
+# Function to handle rate limit errors and calculate wait time
+handle_rate_limit() {
+    local result="$1"
+    local provider="$2"
+    
+    # Extract rate limit information based on provider
+    if [ "$provider" = "claude" ]; then
+        # Claude format: "Claude AI usage limit reached|1751151600"
+        if echo "$result" | grep -q "usage limit reached"; then
+            local timestamp=$(echo "$result" | grep -oE '\|[0-9]+' | tr -d '|')
+            if [ -n "$timestamp" ]; then
+                local current_time=$(date +%s)
+                local wait_seconds=$((timestamp - current_time))
+                if [ $wait_seconds -gt 0 ]; then
+                    echo $wait_seconds
+                    return 0
+                fi
+            fi
+        fi
+    elif [ "$provider" = "gemini" ]; then
+        # Check for Gemini rate limit patterns
+        if echo "$result" | grep -q "quota|rate limit|too many requests"; then
+            # Default wait time for Gemini (can be adjusted based on actual error format)
+            echo 60
+            return 0
+        fi
+    fi
+    
+    # No rate limit detected
+    echo 0
+    return 1
+}
+
 # Function to run the agent on the next available issue
 run_next_issue() {
     # Check if todo.md exists
@@ -222,39 +255,84 @@ run_next_issue() {
     mkdir -p logs
     
     AGENT_SUCCESS=false
+    MAX_RETRIES=3
+    RETRY_COUNT=0
 
     # Run the agent with todo, issue, and plan as context
-    set -o pipefail
+    while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+        set -o pipefail
+        
+        if [ "$PROVIDER" = "gemini" ]; then
+            if ! command -v gemini &> /dev/null; then
+                echo -e "${RED}Error: 'gemini' command not found. Make sure it's installed and in your PATH.${NC}"
+                exit 1
+            fi
+            
+            if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | gemini -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | tee "$LOG_FILE" | format_gemini_output "$OUTPUT_LOG" ); then
+                LAST_LINE=$(tail -n 1 "$OUTPUT_LOG")
+                if echo "$LAST_LINE" | grep -q '"type":"result"' && echo "$LAST_LINE" | grep -q '"status":"success"'; then
+                    AGENT_SUCCESS=true
+                    break
+                fi
+            fi
+        else # Default to claude
+            if ! command -v claude &> /dev/null; then
+                echo -e "${RED}Error: 'claude' command not found. Install it from: https://claude.ai/code${NC}"
+                exit 1
+            fi
 
-    if [ "$PROVIDER" = "gemini" ]; then
-        if ! command -v gemini &> /dev/null; then
-            echo -e "${RED}Error: 'gemini' command not found. Make sure it's installed and in your PATH.${NC}"
-            exit 1
+            if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | claude -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | tee "$LOG_FILE" | format_claude_output "$OUTPUT_LOG" ); then
+                # Check the last line for success signal
+                LAST_LINE=$(tail -n 1 "$OUTPUT_LOG")
+                if echo "$LAST_LINE" | grep -q '"type":"result"' && echo "$LAST_LINE" | grep -q '"is_error":false'; then
+                    AGENT_SUCCESS=true
+                    break
+                fi
+            fi
         fi
         
-        if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | gemini -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | tee "$LOG_FILE" | format_gemini_output "$OUTPUT_LOG" ); then
-            LAST_LINE=$(tail -n 1 "$OUTPUT_LOG")
-            if echo "$LAST_LINE" | grep -q '"type":"result"' && echo "$LAST_LINE" | grep -q '"status":"success"'; then
-                AGENT_SUCCESS=true
+        set +o pipefail
+        
+        # Check if we hit a rate limit
+        LAST_LINE=$(tail -n 1 "$LOG_FILE")
+        if echo "$LAST_LINE" | grep -q '"result"'; then
+            RESULT_MESSAGE=$(echo "$LAST_LINE" | jq -r '.result // ""' 2>/dev/null)
+            WAIT_TIME=$(handle_rate_limit "$RESULT_MESSAGE" "$PROVIDER")
+            
+            if [ $WAIT_TIME -gt 0 ]; then
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                
+                if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                    echo -e "${YELLOW}⏳ Rate limit detected. Waiting ${WAIT_TIME} seconds before retry ${RETRY_COUNT}/${MAX_RETRIES}...${NC}"
+                    
+                    # Show countdown
+                    local remaining=$WAIT_TIME
+                    while [ $remaining -gt 0 ]; do
+                        printf "\r${YELLOW}⏳ Waiting: %02d:%02d remaining...${NC}" $((remaining/60)) $((remaining%60))
+                        sleep 1
+                        remaining=$((remaining - 1))
+                    done
+                    printf "\r${GREEN}✓ Wait complete. Retrying...${NC}\n"
+                    
+                    # Create new log file for retry
+                    TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
+                    LOG_FILE="logs/run-${TIMESTAMP}-${ISSUE_NAME}-${PROVIDER}-retry${RETRY_COUNT}.json"
+                    continue
+                else
+                    echo -e "${RED}❌ Rate limit hit after ${MAX_RETRIES} retries. Please try again later.${NC}"
+                    break
+                fi
+            else
+                # Not a rate limit error, don't retry
+                break
             fi
+        else
+            # No result line found or other error, don't retry
+            break
         fi
-    else # Default to claude
-        if ! command -v claude &> /dev/null; then
-            echo -e "${RED}Error: 'claude' command not found. Install it from: https://claude.ai/code${NC}"
-            exit 1
-        fi
-
-        if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | claude -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | tee "$LOG_FILE" | format_claude_output "$OUTPUT_LOG" ); then
-            # Check the last line for success signal
-            LAST_LINE=$(tail -n 1 "$OUTPUT_LOG")
-            if echo "$LAST_LINE" | grep -q '"type":"result"' && echo "$LAST_LINE" | grep -q '"is_error":false'; then
-                AGENT_SUCCESS=true
-            fi
-        fi
-    fi
-
-    set +o pipefail
-    rm "$OUTPUT_LOG"
+    done
+    
+    rm -f "$OUTPUT_LOG"
 
     echo -e "${CYAN}└─────────────────────────────────────────────────────────────┘${NC}"
 
