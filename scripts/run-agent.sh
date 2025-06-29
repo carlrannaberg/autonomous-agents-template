@@ -170,7 +170,7 @@ format_gemini_output() {
 handle_rate_limit() {
     local result="$1"
     local provider="$2"
-    
+
     # Extract rate limit information based on provider
     if [ "$provider" = "claude" ]; then
         # Claude format: "Claude AI usage limit reached|1751151600"
@@ -193,7 +193,7 @@ handle_rate_limit() {
             return 0
         fi
     fi
-    
+
     # No rate limit detected
     echo 0
     return 1
@@ -218,7 +218,7 @@ run_next_issue() {
     # Extract the issue file path from the issue line
     ISSUE_FILE=$(echo "$CURRENT_ISSUE_LINE" | grep -o '`issues/.*\.md`' | tr -d '`')
     PLAN_FILE="plans/$(basename "$ISSUE_FILE" .md).md"
-    
+
     if [ ! -f "$ISSUE_FILE" ] || [ ! -f "$PLAN_FILE" ]; then
         echo -e "${RED}Error: Issue or plan file not found:${NC}"
         echo -e "  Issue: $ISSUE_FILE"
@@ -250,10 +250,10 @@ run_next_issue() {
     TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
     ISSUE_NAME=$(basename "$ISSUE_FILE" .md)
     LOG_FILE="logs/run-${TIMESTAMP}-${ISSUE_NAME}-${PROVIDER}.json"
-    
+
     # Ensure logs directory exists
     mkdir -p logs
-    
+
     AGENT_SUCCESS=false
     MAX_RETRIES=3
     RETRY_COUNT=0
@@ -261,14 +261,14 @@ run_next_issue() {
     # Run the agent with todo, issue, and plan as context
     while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
         set -o pipefail
-        
+
         if [ "$PROVIDER" = "gemini" ]; then
             if ! command -v gemini &> /dev/null; then
                 echo -e "${RED}Error: 'gemini' command not found. Make sure it's installed and in your PATH.${NC}"
                 exit 1
             fi
-            
-            if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | gemini -p "$INITIAL_PROMPT" --dangerously-skip-permissions --output-format stream-json --verbose | tee "$LOG_FILE" | format_gemini_output "$OUTPUT_LOG" ); then
+
+            if ( cat todo.md "$ISSUE_FILE" "$PLAN_FILE" | gemini -p "$INITIAL_PROMPT" -y -d | tee "$LOG_FILE" | format_gemini_output "$OUTPUT_LOG" ); then
                 LAST_LINE=$(tail -n 1 "$OUTPUT_LOG")
                 if echo "$LAST_LINE" | grep -q '"type":"result"' && echo "$LAST_LINE" | grep -q '"status":"success"'; then
                     AGENT_SUCCESS=true
@@ -290,21 +290,21 @@ run_next_issue() {
                 fi
             fi
         fi
-        
+
         set +o pipefail
-        
+
         # Check if we hit a rate limit
         LAST_LINE=$(tail -n 1 "$LOG_FILE")
         if echo "$LAST_LINE" | grep -q '"result"'; then
             RESULT_MESSAGE=$(echo "$LAST_LINE" | jq -r '.result // ""' 2>/dev/null)
             WAIT_TIME=$(handle_rate_limit "$RESULT_MESSAGE" "$PROVIDER")
-            
+
             if [ $WAIT_TIME -gt 0 ]; then
                 RETRY_COUNT=$((RETRY_COUNT + 1))
-                
+
                 if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
                     echo -e "${YELLOW}⏳ Rate limit detected. Waiting ${WAIT_TIME} seconds before retry ${RETRY_COUNT}/${MAX_RETRIES}...${NC}"
-                    
+
                     # Show countdown
                     local remaining=$WAIT_TIME
                     while [ $remaining -gt 0 ]; do
@@ -313,7 +313,7 @@ run_next_issue() {
                         remaining=$((remaining - 1))
                     done
                     printf "\r${GREEN}✓ Wait complete. Retrying...${NC}\n"
-                    
+
                     # Create new log file for retry
                     TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)
                     LOG_FILE="logs/run-${TIMESTAMP}-${ISSUE_NAME}-${PROVIDER}-retry${RETRY_COUNT}.json"
@@ -331,7 +331,7 @@ run_next_issue() {
             break
         fi
     done
-    
+
     rm -f "$OUTPUT_LOG"
 
     echo -e "${CYAN}└─────────────────────────────────────────────────────────────┘${NC}"
