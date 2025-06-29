@@ -4,10 +4,13 @@ class ClaudeStreamViewer {
         this.filteredLogs = [];
         this.currentLog = null;
         this.showRawJson = false;
+        this.autoRefresh = true;
+        this.refreshInterval = null;
         
         this.initializeElements();
         this.attachEventListeners();
         this.loadLogs();
+        this.startAutoRefresh();
     }
 
     initializeElements() {
@@ -16,6 +19,8 @@ class ClaudeStreamViewer {
         this.streamContent = document.getElementById('stream-content');
         this.searchInput = document.getElementById('search');
         this.refreshButton = document.getElementById('refresh');
+        this.autoRefreshToggle = document.getElementById('auto-refresh');
+        this.refreshIntervalSelect = document.getElementById('refresh-interval');
         this.closeViewerButton = document.getElementById('close-viewer');
         this.toggleRawButton = document.getElementById('toggle-raw');
         this.downloadButton = document.getElementById('download-log');
@@ -24,6 +29,8 @@ class ClaudeStreamViewer {
     attachEventListeners() {
         this.searchInput.addEventListener('input', () => this.filterLogs());
         this.refreshButton.addEventListener('click', () => this.loadLogs());
+        this.autoRefreshToggle.addEventListener('change', () => this.toggleAutoRefresh());
+        this.refreshIntervalSelect.addEventListener('change', () => this.updateRefreshInterval());
         this.closeViewerButton.addEventListener('click', () => this.showLogsList());
         this.toggleRawButton.addEventListener('click', () => this.toggleRawJson());
         this.downloadButton.addEventListener('click', () => this.downloadCurrentLog());
@@ -40,6 +47,38 @@ class ClaudeStreamViewer {
             this.renderLogsList();
         } catch (error) {
             this.showError('Failed to load logs. Make sure the server is running.');
+        }
+    }
+
+    startAutoRefresh() {
+        if (this.autoRefresh && !this.refreshInterval) {
+            const interval = parseInt(this.refreshIntervalSelect.value) || 5000;
+            this.refreshInterval = setInterval(() => {
+                this.loadLogs();
+            }, interval);
+        }
+    }
+
+    stopAutoRefresh() {
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+            this.refreshInterval = null;
+        }
+    }
+
+    toggleAutoRefresh() {
+        this.autoRefresh = this.autoRefreshToggle.checked;
+        if (this.autoRefresh) {
+            this.startAutoRefresh();
+        } else {
+            this.stopAutoRefresh();
+        }
+    }
+
+    updateRefreshInterval() {
+        if (this.autoRefresh) {
+            this.stopAutoRefresh();
+            this.startAutoRefresh();
         }
     }
 

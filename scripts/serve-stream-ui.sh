@@ -116,7 +116,7 @@ class StreamUIHandler(http.server.SimpleHTTPRequestHandler):
         try:
             # Sanitize filename
             filename = os.path.basename(filename)
-            filepath = os.path.join('../logs', filename)
+            filepath = os.path.join('logs', filename)
             
             if not os.path.exists(filepath):
                 self.send_error_response("Log file not found", 404)
@@ -194,6 +194,6 @@ if __name__ == "__main__":
             print("\n🛑 Server stopped")
 EOF
 
-# Run the Python server
+# Run the Python server (from project root, not ui directory)
 echo -e "${GREEN}✅ Starting server...${NC}"
-cd ui && python3 /tmp/stream_server.py "$PORT" "$HOST"
+python3 /tmp/stream_server.py "$PORT" "$HOST"

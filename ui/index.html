@@ -19,6 +19,19 @@
                 <div class="controls">
                     <input type="text" id="search" placeholder="Search logs..." />
                     <button id="refresh">Refresh</button>
+                    <div class="auto-refresh-controls">
+                        <label>
+                            <input type="checkbox" id="auto-refresh" checked />
+                            Auto-refresh
+                        </label>
+                        <select id="refresh-interval">
+                            <option value="2000">2s</option>
+                            <option value="5000" selected>5s</option>
+                            <option value="10000">10s</option>
+                            <option value="30000">30s</option>
+                            <option value="60000">1m</option>
+                        </select>
+                    </div>
                 </div>
                 <div id="logs-container" class="logs-container">
                     <p class="loading">Loading logs...</p>

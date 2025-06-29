@@ -46,6 +46,32 @@ header p {
     display: flex;
     gap: 12px;
     margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.auto-refresh-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.auto-refresh-controls label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    color: #8b949e;
+}
+
+.auto-refresh-controls select {
+    background: #21262d;
+    border: 1px solid #30363d;
+    color: #e6edf3;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
 }
 
 #search {

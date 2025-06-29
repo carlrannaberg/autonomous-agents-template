@@ -1,6 +1,6 @@
-# Claude Instructions
+# Gemini Instructions
 
-This file contains project-specific instructions for Claude Code. Customize this file to provide context about your project, coding standards, and any special requirements that Claude should follow when working on tasks.
+This file contains project-specific instructions for Gemini. Customize this file to provide context about your project, coding standards, and any special requirements that Gemini should follow when working on tasks.
 
 ## Project Context
 <!-- Describe your project architecture, purpose, and key components -->
